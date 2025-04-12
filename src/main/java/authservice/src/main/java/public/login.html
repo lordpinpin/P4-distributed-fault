@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - Course Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .courses-container {
+            width: 80%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .course {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            background-color: red;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<h2>Available Courses</h2>
+<div class="courses-container" id="courses-list"></div>
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+<script>
+    // Check if the token is available
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'http://localhost:7001/login.html'; // Redirect to login if no token
+    }
+
+    // Fetch courses from the course service API
+    fetch('http://localhost:7002/api/courses', { // Replace with actual API URL
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            const coursesList = document.getElementById('courses-list');
+            data.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.classList.add('course');
+                courseElement.innerHTML = `
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                `;
+                coursesList.appendChild(courseElement);
+            });
+        })
+        .catch(error => {
+            alert('Failed to fetch courses');
+            console.error(error);
+        });
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = 'http://localhost:7001/login.html'; // Redirect to login page after logout
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Courses</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background-color: #f0f0f0; }
+        h1 { color: #333; }
+        #course-list { margin-top: 1rem; }
+        .course { padding: 1rem; background: white; margin-bottom: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+<h1>Available Courses</h1>
+
+<div>
+    <label for="tokenInput">JWT Token:</label>
+    <input type="text" id="tokenInput" style="width: 60%" />
+    <button onclick="fetchCourses()">Load Courses</button>
+</div>
+
+<div id="course-list"></div>
+
+<script>
+    async function fetchCourses() {
+        const token = document.getElementById("tokenInput").value;
+
+        try {
+            const res = await fetch("/api/courses", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            if (!res.ok) {
+                const err = await res.text();
+                throw new Error(err);
+            }
+
+            const courses = await res.json();
+            const list = document.getElementById("course-list");
+            list.innerHTML = "";
+
+            if (courses.length === 0) {
+                list.innerHTML = "<p>No courses available.</p>";
+                return;
+            }
+
+            courses.forEach(course => {
+                const div = document.createElement("div");
+                div.className = "course";
+                div.innerHTML = `
+                        <strong>${course.name}</strong><br>
+                        ID: ${course.id}<br>
+                        Description: ${course.description}
+                    `;
+                list.appendChild(div);
+            });
+
+        } catch (err) {
+            alert("Error loading courses: " + err.message);
+        }
+    }
+</script>
+</body>
+</html>

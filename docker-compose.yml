@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  # Auth Service (build from Dockerfile in the "auth-service" folder)
+  auth-service:
+    build:
+      context: ./src/main/java/authservice
+      dockerfile: Dockerfile
+    ports:
+      - "7001:7001"
+    environment:
+      - DB_HOST=db            # PostgreSQL container name
+      - DB_PORT=5432          # Default PostgreSQL port
+      - DB_NAME=auth_db       # Database for Auth service
+      - DB_USER=postgres      # PostgreSQL user (you can change this)
+      - DB_PASSWORD=root      # PostgreSQL password (you can change this)
+
+  # Course Service (build from Dockerfile in the "course-service" folder)
+  course-service:
+    build:
+      context: ./src/main/java/courseservice
+      dockerfile: Dockerfile
+    ports:
+      - "7002:7002"
+    environment:
+      - DB_HOST=db            # PostgreSQL container name
+      - DB_PORT=5432          # Default PostgreSQL port
+      - DB_NAME=course_db     # Database for Course service
+      - DB_USER=postgres      # PostgreSQL user (you can change this)
+      - DB_PASSWORD=root      # PostgreSQL password (you can change this)
+
+  # PostgreSQL Database
+  db:
+    image: postgres:13        # Use official PostgreSQL image (you can specify version)
+    environment:
+      POSTGRES_USER: postgres # Default PostgreSQL user
+      POSTGRES_PASSWORD: root # Password for the user
+      POSTGRES_DB: course_db # Default DB (can be overwritten by services)
+    ports:
+      - "5432:5432"           # Expose port to host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistent storage
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:              # Create a named volume for data persistence
+
+networks:
+  app-network:
+    driver: bridge
+
+

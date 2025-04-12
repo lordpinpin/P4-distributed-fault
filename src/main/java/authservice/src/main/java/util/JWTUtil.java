@@ -1,4 +1,4 @@
-package util;
+package authservice.src.main.java.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
