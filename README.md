@@ -44,3 +44,6 @@ docker-compose down
 
 ## Demo
 
+## Slides
+
+For the information slides, check [STDISCM - P4 Info Slides.pdf](https://github.com/lordpinpin/P4-distributed-fault/blob/main/STDISCM%20-%20P4%20Info%20Slides.pdf)
